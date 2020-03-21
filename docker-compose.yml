@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   ui:
     build: ./src/ui
@@ -12,6 +12,12 @@ services:
       - api
   api:
     build: ./src/api
+    environment:
+      - TOKEN_SECRET=${TOKEN_SECRET}
+      - DB_USER=${DB_USER}
+      - DB_NAME=${DB_NAME}
+      - DB_HOST=${DB_HOST}
+      - DB_PASSWORD=${DB_PASSWORD}
     volumes:
       - ./src/api:/api
       - /api/node_modules
@@ -22,17 +28,22 @@ services:
       - flyway
   flyway:
     image: boxfuse/flyway:5.2.1
-    command: -url=jdbc:mysql://db -schemas=mvw -user=root -password=P@ssw0rd -connectRetries=60 migrate
+    command: -url=jdbc:postgresql://db:5432/mvw -user=postgres -password=${POSTGRES_PASSWORD} -connectRetries=60 migrate
     volumes:
       - ./sql:/flyway/sql
     container_name: mvw_flyway
     depends_on:
       - db
   db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
+    image: postgres:11.7
     environment:
-      - MYSQL_ROOT_PASSWORD=P@ssw0rd
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=mvw
+    volumes:
+      - db-data:/var/lib/postgresql/data
     ports:
-      - 3306:3306
+      - 5432:5432
     container_name: mvw_db
+
+volumes:
+  db-data:

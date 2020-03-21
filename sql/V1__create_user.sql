@@ -1,8 +1,10 @@
-CREATE TABLE mvw_user (
-  id         int(11)  NOT NULL AUTO_INCREMENT,
-  username   TEXT     NOT NULL,
-  password   TEXT     NOT NULL,
-  created_at datetime NOT NULL,
-  updated_at datetime NOT NULL,
-  PRIMARY KEY (id)
-);
+CREATE SEQUENCE public.mvw_user_id_seq;
+CREATE TABLE public.mvw_user (
+  id integer NOT NULL DEFAULT nextval('mvw_user_id_seq' :: regclass),
+  username character varying(80) COLLATE pg_catalog."default" NOT NULL,
+  password character varying(60) COLLATE pg_catalog."default" NOT NULL,
+  created_at timestamp with time zone,
+  updated_at timestamp with time zone,
+  CONSTRAINT users_pkey PRIMARY KEY (id),
+  CONSTRAINT users_username_unique UNIQUE (username)
+) WITH (OIDS = FALSE) TABLESPACE pg_default;

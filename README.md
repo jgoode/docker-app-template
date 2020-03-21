@@ -41,3 +41,28 @@ mvw_flyway exited with code 0
 ```
 
 Until you see this the API may respond with errors as the database has not yet become available.
+
+To remove existing docker images:
+```
+docker rmi $(docker images -a -q)
+```
+To remove the postgres db-data (note this clears all the data):
+```
+docker volume rm mvwebapp-postgres_db-data
+```
+
+Rebuild the images:
+```
+docker-compose up --build
+```
+
+You will need to create a .env file for environment variables needed for the composer images. Add the following to the .env file and make sure it is not included in git commits (see .gitignore):
+
+```
+POSTGRES_PASSWORD=[your postgresql password]
+TOKEN_SECRET=[some secret]
+DB_USER=[default postgres]
+DB_NAME=mvw
+DB_HOST=mvw_db
+DB_PASSWORD=[same as POSTGRES_PASSWORD]
+```
